@@ -1,6 +1,7 @@
 name: Data Pipeline
 
 on:
+  workflow_dispatch:
   schedule:
     # Menjalankan pekerjaan setiap hari pada jam 1 AM UTC untuk consume data
     - cron: '0 1 * * *'
