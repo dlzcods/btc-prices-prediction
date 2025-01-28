@@ -63,7 +63,13 @@ jobs:
       - name: Train model and save predictions
         run: |
           python src/train_and_predict.py
-          
+
+      - name: Upload model and predictions as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: model-and-predictions
+          path: src/
+
       - name: Commit and push model and predictions
         env:
           PAT: ${{ secrets.PAT_TOKEN }}

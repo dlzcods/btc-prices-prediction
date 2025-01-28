@@ -54,9 +54,9 @@ def train_and_predict():
     print(f"Mean Absolute Error: {best_mae:.2f}")
     
     # Save model and scalers
-    best_model.save_model('model.json')
-    joblib.dump(scaler_X, 'scaler_X.pkl')
-    joblib.dump(scaler_y, 'scaler_Y.pkl')
+    best_model.save_model('src/model.json')
+    joblib.dump(scaler_X, 'src/scaler_X.pkl')
+    joblib.dump(scaler_y, 'src/scaler_Y.pkl')
     
     # Prepare prediction data
     last_features = X.iloc[-5:]
@@ -73,8 +73,8 @@ def train_and_predict():
     # Save predictions
     predictions = pd.DataFrame({'Date': predicted_dates, 
                                 'Predicted_Price': pred_xgb.flatten()})
-    predictions.to_csv('predictions.csv', index=False)
-    print("Prediction saved to predictions.csv")
+    predictions.to_csv('src/predictions.csv', index=False)
+    print("Prediction saved to src/predictions.csv")
 
 # Execute training and prediction
 train_and_predict()
