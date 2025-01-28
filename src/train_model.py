@@ -10,7 +10,7 @@ def train_model():
 
     # Memilih fitur dan target
     X = df[['high_shifted', 'low_shifted', 'open_shifted', 'volume_shifted', 'marketcap_shifted']]
-    y = df['Prediction_5D']
+    y = df['prediction_5D']
 
     # Membagi data menjadi train dan test
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)

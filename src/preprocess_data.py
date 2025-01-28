@@ -13,6 +13,7 @@ def preprocess_data():
     df['open_shifted'] = df['open'].shift(5)
     df['volume_shifted'] = df['volume'].shift(5)
     df['marketcap_shifted'] = df['marketcap'].shift(5)
+    df['prediction_5D'] = df['close'].shift(5)
     
     # Menghapus data yang hilang setelah shifting
     df.dropna(inplace=True)
