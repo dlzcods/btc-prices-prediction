@@ -38,7 +38,7 @@ jobs:
           git commit -m "Update historical data"
           git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
 
-  train_model:
+  train_and_predict:
     runs-on: ubuntu-latest
     needs: consume_data
     steps:
@@ -60,12 +60,7 @@ jobs:
 
       - name: Train model and save predictions
         run: |
-          python src/train_model.py
-          
-      - name: Save predictions
-        run: |
-          python src/predict.py
-          python src/dashboard.py
+          python src/train_and_predict.py
           
       - name: Commit and push model and predictions
         env:
@@ -73,6 +68,6 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add src/model.pkl src/predictions.csv
+          git add src/model.json src/scaler_X.pkl src/scaler_Y.pkl src/predictions.csv
           git commit -m "Update model and predictions"
           git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
