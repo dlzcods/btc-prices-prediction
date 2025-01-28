@@ -5,9 +5,9 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 
 def train_model():
-    # Membaca dataset
-    df = pd.read_csv('data/btc_historical_data.csv')
-    
+    # Membaca dataset yang telah diproses
+    df = pd.read_csv('data/preprocessed_data.csv')
+
     # Memilih fitur dan target
     X = df[['high_shifted', 'low_shifted', 'open_shifted', 'volume_shifted', 'marketcap_shifted']]
     y = df['Prediction_5D']
