@@ -28,15 +28,19 @@ jobs:
         run: |
           python src/consume_data.py
 
-      - name: Commit and push new data
+      - name: Check for changes and commit
         env:
           PAT: ${{ secrets.PAT_TOKEN }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add data/btc_historical_data.csv
-          git commit -m "Update historical data"
-          git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
+          if git diff --quiet --cached; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update historical data"
+            git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
+          fi
 
   train_and_predict:
     runs-on: ubuntu-latest
@@ -62,12 +66,16 @@ jobs:
         run: |
           python src/train_and_predict.py
           
-      - name: Commit and push model and predictions
+      - name: Check for changes and commit
         env:
           PAT: ${{ secrets.PAT_TOKEN }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add src/model.json src/scaler_X.pkl src/scaler_Y.pkl src/predictions.csv
-          git commit -m "Update model and predictions"
-          git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
+          if git diff --quiet --cached; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update model and predictions"
+            git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
+          fi
