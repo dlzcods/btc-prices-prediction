@@ -29,12 +29,14 @@ jobs:
           python src/consume_data.py
 
       - name: Commit and push new data
+        env:
+          PAT: ${{ secrets.PAT_TOKEN }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add data/btc_historical_data.csv
           git commit -m "Update historical data"
-          git push
+          git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
 
   train_model:
     runs-on: ubuntu-latest
@@ -66,9 +68,11 @@ jobs:
           python src/dashboard.py
           
       - name: Commit and push model and predictions
+        env:
+          PAT: ${{ secrets.PAT_TOKEN }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add src/model.pkl src/predictions.csv
           git commit -m "Update model and predictions"
-          git push
+          git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
