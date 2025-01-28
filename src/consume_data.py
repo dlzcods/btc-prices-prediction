@@ -30,15 +30,21 @@ def fetch_data():
         except FileNotFoundError:
             existing_data = pd.DataFrame(columns=df.columns)
 
-        # Merge data baru dengan data yang sudah ada
-        combined_data = pd.concat([existing_data, df], ignore_index=True)
-        
-        # Urutkan data berdasarkan tanggal
-        combined_data.sort_values(by='date', inplace=True)
-        
-        # Simpan data ke file CSV
-        combined_data.to_csv('data/btc_historical_data.csv', index=False)
-        print("Data berhasil diambil, dimerge, dan disimpan.")
+        # Validasi data baru
+        new_data = df[~df['date'].isin(existing_data['date'])]
+
+        if not new_data.empty:
+            # Merge data baru dengan data yang sudah ada
+            combined_data = pd.concat([existing_data, new_data], ignore_index=True)
+            
+            # Urutkan data berdasarkan tanggal
+            combined_data.sort_values(by='date', inplace=True)
+            
+            # Simpan data ke file CSV
+            combined_data.to_csv('data/btc_historical_data.csv', index=False)
+            print("Data berhasil diambil, dimerge, dan disimpan.")
+        else:
+            print("Data baru sudah ada dalam file CSV. Tidak ada data yang ditambahkan.")
     else:
         print(f"Error: {response.status_code}")
 
