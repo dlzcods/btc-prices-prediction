@@ -32,28 +32,11 @@ jobs:
         run: |
           python src/preprocess_data.py
 
-      - name: Verify preprocessed data file
-        run: |
-          if [ -f "data/preprocessed_data.csv" ]; then
-            echo "Preprocessed data file exists."
-          else
-            echo "Error: Preprocessed data file does not exist."
-            exit 1
-          fi
-
-      - name: Commit and push preprocessed data
-        env:
-          PAT: ${{ secrets.PAT_TOKEN }}
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add data/preprocessed_data.csv src/last_date.txt
-          if git diff --quiet --cached; then
-            echo "No changes to commit."
-          else
-            git commit -m "Update preprocessed data and last date"
-            git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
-          fi
+      - name: Upload preprocessed data as an artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: preprocessed-data
+          path: data/preprocessed_data.csv
 
   train_and_predict:
     runs-on: ubuntu-latest
@@ -71,14 +54,11 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Verify preprocessed data file
-        run: |
-          if [ -f "data/preprocessed_data.csv" ]; then
-            echo "Preprocessed data file exists."
-          else
-            echo "Error: Preprocessed data file does not exist."
-            exit 1
-          fi
+      - name: Download preprocessed data artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: preprocessed-data
+          path: data/
 
       - name: Train model and save predictions
         run: |
