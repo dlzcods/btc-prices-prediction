@@ -28,17 +28,21 @@ jobs:
         run: |
           python src/consume_data.py
 
-      - name: Check for changes and commit
+      - name: Preprocess data
+        run: |
+          python src/preprocess_data.py
+
+      - name: Commit and push preprocessed data
         env:
           PAT: ${{ secrets.PAT_TOKEN }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add data/btc_historical_data.csv
+          git add data/preprocessed_data.csv src/last_date.txt
           if git diff --quiet --cached; then
             echo "No changes to commit."
           else
-            git commit -m "Update historical data"
+            git commit -m "Update preprocessed data and last date"
             git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
           fi
 
@@ -58,15 +62,11 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Preprocess data
-        run: |
-          python src/preprocess_data.py
-
       - name: Train model and save predictions
         run: |
           python src/train_and_predict.py
           
-      - name: Check for changes and commit
+      - name: Commit and push model and predictions
         env:
           PAT: ${{ secrets.PAT_TOKEN }}
         run: |
