@@ -26,9 +26,12 @@ def fetch_data():
         # Baca data yang sudah ada
         try:
             existing_data = pd.read_csv('data/btc_historical_data.csv')
-            existing_data['date'] = pd.to_datetime(existing_data['date'])
+            existing_data['date'] = pd.to_datetime(existing_data['date'])  # Konversi ke datetime
         except FileNotFoundError:
             existing_data = pd.DataFrame(columns=df.columns)
+
+        # Konversi kolom date di df ke datetime
+        df['date'] = pd.to_datetime(df['date'])
 
         # Validasi data baru
         new_data = df[~df['date'].isin(existing_data['date'])]
