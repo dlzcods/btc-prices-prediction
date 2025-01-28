@@ -32,6 +32,15 @@ jobs:
         run: |
           python src/preprocess_data.py
 
+      - name: Verify preprocessed data file
+        run: |
+          if [ -f "data/preprocessed_data.csv" ]; then
+            echo "Preprocessed data file exists."
+          else
+            echo "Error: Preprocessed data file does not exist."
+            exit 1
+          fi
+
       - name: Commit and push preprocessed data
         env:
           PAT: ${{ secrets.PAT_TOKEN }}
@@ -61,6 +70,15 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+
+      - name: Verify preprocessed data file
+        run: |
+          if [ -f "data/preprocessed_data.csv" ]; then
+            echo "Preprocessed data file exists."
+          else
+            echo "Error: Preprocessed data file does not exist."
+            exit 1
+          fi
 
       - name: Train model and save predictions
         run: |
