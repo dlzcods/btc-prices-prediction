@@ -5,7 +5,7 @@ def preprocess_data():
     df = pd.read_csv('data/btc_historical_data.csv')
     
     # Menyimpan tanggal terakhir sebelum pelatihan
-    last_date = pd.to_datetime(df['time_open'].iloc[-1])
+    last_date = pd.to_datetime(df['date'].iloc[-1])
 
     # Melakukan shifting pada data
     df['high_shifted'] = df['high'].shift(5)
