@@ -3,10 +3,8 @@ name: Data Pipeline
 on:
   workflow_dispatch:
   schedule:
-    # Run the job every day at 1 AM UTC to consume data
-    - cron: '0 1 * * *'
-    # Run the job every 6 days at 3 AM UTC to train the model
-    - cron: '0 3 */6 * *'
+    - cron: '0 1 * * *'  # Daily at 1 AM UTC
+    - cron: '0 3 */6 * *'  # Every 6 days at 3 AM UTC
 
 jobs:
   consume_data:
@@ -21,24 +19,35 @@ jobs:
           python-version: '3.8'
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Consume data from Coinpaprika API
-        run: |
-          python src/consume_data.py
+        run: python src/consume_data.py
 
-      - name: Preprocess data
-        run: |
-          python src/preprocess_data.py
-
-      - name: Upload preprocessed data and last date as artifacts
+      - name: Upload merged data as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: preprocessed-data
-          path: |
-            data/preprocessed_data.csv
-            src/last_date.txt
+          name: merged-data
+          path: data/btc_historical_data.csv
+
+      - name: Preprocess data
+        run: python src/preprocess_data.py
+
+      - name: Upload last date as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: last-date
+          path: src/last_date.txt
+
+      - name: Commit and push updated historical data
+        env:
+          PAT: ${{ secrets.PAT_TOKEN }}
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add data/btc_historical_data.csv
+          git commit -m "Update historical data"
+          git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
 
   train_and_predict:
     runs-on: ubuntu-latest
@@ -53,18 +62,22 @@ jobs:
           python-version: '3.8'
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      - name: Download preprocessed data artifact
+      - name: Download merged data artifact
         uses: actions/download-artifact@v3
         with:
-          name: preprocessed-data
+          name: merged-data
           path: data/
 
+      - name: Download last date artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: last-date
+          path: src/
+
       - name: Train model and save predictions
-        run: |
-          python src/train_and_predict.py
+        run: python src/train_and_predict.py
 
       - name: Upload model and predictions as artifacts
         uses: actions/upload-artifact@v3
@@ -82,6 +95,6 @@ jobs:
           if git diff --quiet --cached; then
             echo "No changes to commit."
           else
-              git commit -m "Update model and predictions"
-              git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
+            git commit -m "Update model and predictions"
+            git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
           fi
