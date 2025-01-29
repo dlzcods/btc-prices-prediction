@@ -48,11 +48,12 @@ jobs:
         env:
           PAT: ${{ secrets.PAT_TOKEN }}
         run: |
-          git config --global user.name "github-actions"
+          it config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add data/btc_historical_data.csv
-          git commit -m "Update historical data"
-          git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
+          git fetch origin update-historical-data
+          git checkout main
+          git merge update-historical-data --no-ff --no-edit
+          git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git main
 
   train_and_predict:
     runs-on: ubuntu-latest
@@ -103,5 +104,5 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "Update model and predictions"
-            git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
+            git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git main
           fi
