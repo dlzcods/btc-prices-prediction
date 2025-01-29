@@ -95,5 +95,12 @@ def train_and_predict():
     combined_predictions.to_csv('data/combined_predictions.csv', index=False)
     print("Combined predictions saved to data/combined_predictions.csv")
 
+    # Save evaluation metrics
+    metrics_df = pd.DataFrame({
+        'Metric': ['MAE', 'MSE'],
+        'Value': [best_mae, best_mse]
+    })
+    metrics_df.to_csv('data/evaluation_metrics.csv', index=False)
+
 # Execute training and prediction
 train_and_predict()

@@ -97,6 +97,12 @@ jobs:
                 src/scaler_X.pkl
                 src/scaler_Y.pkl
 
+      - name: Upload evaluation metrics as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: evaluation
+          path: data/evaluation_metrics.csv
+
   commit_and_push:
     runs-on: ubuntu-latest
     needs: train_and_predict
@@ -142,13 +148,19 @@ jobs:
                 src/scaler_X.pkl
                 src/scaler_Y.pkl
 
+      - name: Download evaluation metrics artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: evaluation
+          path: data/evaluation_metrics.csv
+
       - name: Commit and push all changes
         env:
           PAT: ${{ secrets.PAT_TOKEN }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add data/btc_historical_data.csv data/preprocessed_data.csv data/combined_predictions.csv src/last_date.txt src/model.json src/scaler_X.pkl src/scaler_Y.pkl
+          git add data/btc_historical_data.csv data/preprocessed_data.csv data/combined_predictions.csv data/last_date.txt data/evaluation_metrics.csv src/model.json src/scaler_X.pkl src/scaler_Y.pkl
           if git diff --quiet --cached; then
             echo "No changes to commit."
           else
