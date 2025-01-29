@@ -7,20 +7,20 @@ import plotly.graph_objs as go
 from datetime import datetime
 
 def add_logo():
-    logo_url = "./btc logo/image.png"  # URL logo BTC
+    logo_url = "src/btc_logo/image.png"  # URL logo BTC
     st.sidebar.image(logo_url, width=50)
 
 def app():
     try:
         # Load historical data
-        historical_df = pd.read_csv('../data/btc_historical_data.csv')
+        historical_df = pd.read_csv('./data/btc_historical_data.csv')
         historical_df['Date'] = pd.to_datetime(historical_df['date'])
         
         # Load combined predicted data (both training and future predictions)
-        predictions_df = pd.read_csv('../data/combined_predictions.csv')
+        predictions_df = pd.read_csv('./data/combined_predictions.csv')
         predictions_df['Date'] = pd.to_datetime(predictions_df['Date'])
 
-        metrics_df = pd.read_csv('../data/evaluation_metrics.csv')
+        metrics_df = pd.read_csv('./data/evaluation_metrics.csv')
         
         # Add logo in the sidebar
         add_logo()
