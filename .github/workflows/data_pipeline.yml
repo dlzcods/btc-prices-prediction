@@ -152,7 +152,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: evaluation
-          path: data/evaluation_metrics.csv
+          path: data/
 
       - name: Commit and push all changes
         env:

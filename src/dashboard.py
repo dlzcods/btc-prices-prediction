@@ -19,6 +19,8 @@ def app():
         # Load combined predicted data (both training and future predictions)
         predictions_df = pd.read_csv('../data/combined_predictions.csv')
         predictions_df['Date'] = pd.to_datetime(predictions_df['Date'])
+
+        metrics_df = pd.read_csv('../data/evaluation_metrics.csv')
         
         # Add logo in the sidebar
         add_logo()
@@ -97,6 +99,36 @@ def app():
 
         # Display the plot in Streamlit
         st.plotly_chart(fig)
+
+        # Display evaluation metrics
+        st.header('Model Evaluation')
+        mae = metrics_df.loc[metrics_df['Metric'] == 'MAE', 'Value'].values[0]
+
+        # Create two columns
+        col1, col2 = st.columns(2)
+
+        # Explanation in the left column
+        with col1:
+            st.markdown("""
+            <div style="text-align: justify;">
+                <strong>Mean Absolute Error (MAE):</strong><br>
+                The Mean Absolute Error (MAE) is a measure of the average magnitude of the errors in a set of predictions, without considering their direction. It gives you the average amount by which the predicted values deviate from the actual values. A lower MAE indicates better performance of the model.
+            </div>
+            """, unsafe_allow_html=True)
+
+        # MAE value in the right column
+        with col2:
+            st.markdown(f"""
+            <div style="text-align: center; font-size: 24px; font-weight: bold; margin: auto; height: 100px; display: ; align-items: center; justify-content: center;">
+                Mean Absolute Error (MAE) 
+                <div style= "font-size: 35px;">
+                    ${mae:.2f}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.caption(' ')
+        st.caption('Copyright (c) Muhammad Abdiel Al Hafiz 2025')
 
     except Exception as e:
         st.error(f"An error occurred: {e}")
