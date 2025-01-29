@@ -84,3 +84,4 @@ jobs:
           else
               git commit -m "Update model and predictions"
               git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
+          fi
