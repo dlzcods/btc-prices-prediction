@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 def train_and_predict():
     # Load and preprocess data
     df = pd.read_csv('data/preprocessed_data.csv')
+    df['Date'] = pd.to_datetime(df['date'])  # Ensure the Date column is in datetime format
     
     # Split features and target
     X = df[['high_shifted', 'low_shifted', 'open_shifted', 'volume_shifted', 'marketcap_shifted']]
@@ -73,9 +74,9 @@ def train_and_predict():
     # Calculate predicted dates
     predicted_dates = [last_date + timedelta(days=i) for i in range(1, 6)]
     
-    # Save training predictions
+    # Save training predictions with correct dates
     training_predictions = pd.DataFrame({
-        'Date': df.index[-len(y_pred):],
+        'Date': df.loc[X_test.index, 'Date'],  # Use actual dates from historical data
         'Predicted_Price': y_pred.flatten(),
         'Type': 'Training'
     })
