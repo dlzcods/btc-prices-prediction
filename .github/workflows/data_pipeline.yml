@@ -92,7 +92,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: model
-          path: src/model.json
+          path: | 
+                src/model.json
                 src/scaler_X.pkl
                 src/scaler_Y.pkl
 
@@ -136,7 +137,8 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: model
-          path: src/model.json
+          path: | 
+                src/model.json
                 src/scaler_X.pkl
                 src/scaler_Y.pkl
 
