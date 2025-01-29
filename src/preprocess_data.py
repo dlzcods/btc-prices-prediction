@@ -55,9 +55,9 @@ def preprocess_data():
 
     # Save the last date to a text file
     try:
-        with open('src/last_date.txt', 'w') as f:
+        with open('data/last_date.txt', 'w') as f:
             f.write(str(last_date))
-        print("Last date saved to 'src/last_date.txt'.")
+        print("Last date saved to 'data/last_date.txt'.")
     except Exception as e:
         print(f"Error saving last date: {e}")
 

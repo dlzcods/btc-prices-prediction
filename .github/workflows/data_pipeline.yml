@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: last-date
-          path: src/last_date.txt
+          path: data/last_date.txt
 
   train_and_predict:
     runs-on: ubuntu-latest
@@ -76,17 +76,25 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: last-date
-          path: src/
+          path: data/
 
       - name: Train model and save predictions
         run: |
           python src/train_and_predict.py
 
-      - name: Upload model and predictions as artifacts
+      - name: Upload predictions as artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: model-and-predictions
-          path: src/
+          name: predictions
+          path: data/combined_predictions.csv
+
+      - name: Upload model as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: model
+          path: src/model.json
+                src/scaler_X.pkl
+                src/scaler_Y.pkl
 
   commit_and_push:
     runs-on: ubuntu-latest
@@ -116,12 +124,18 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: last-date
-          path: src/
+          path: data/
 
-      - name: Download model and predictions artifact
+      - name: Download predictions artifact
         uses: actions/download-artifact@v3
         with:
-          name: model-and-predictions
+          name: predictions
+          path: data/
+
+      - name: Download model artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: model
           path: src/
 
       - name: Commit and push all changes
@@ -130,7 +144,7 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add data/btc_historical_data.csv data/preprocessed_data.csv src/last_date.txt src/model.json src/scaler_X.pkl src/scaler_Y.pkl src/combined_predictions.csv
+          git add data/btc_historical_data.csv data/preprocessed_data.csv data/combined_predictions.csv src/last_date.txt src/model.json src/scaler_X.pkl src/scaler_Y.pkl
           if git diff --quiet --cached; then
             echo "No changes to commit."
           else

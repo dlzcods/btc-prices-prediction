@@ -17,7 +17,7 @@ def app():
         historical_df['Date'] = pd.to_datetime(historical_df['date'])
         
         # Load combined predicted data (both training and future predictions)
-        predictions_df = pd.read_csv('src/combined_predictions.csv')
+        predictions_df = pd.read_csv('../data/combined_predictions.csv')
         predictions_df['Date'] = pd.to_datetime(predictions_df['Date'])
         
         # Add logo in the sidebar
@@ -35,6 +35,16 @@ def app():
         historical_df = historical_df[(historical_df['Date'] >= pd.to_datetime(start_date)) & (historical_df['Date'] <= pd.to_datetime(end_date))]
         predictions_df = predictions_df[(predictions_df['Date'] >= pd.to_datetime(start_date)) & (predictions_df['Date'] <= pd.to_datetime(end_date))]
 
+        # Sort the predictions DataFrame by Date
+        predictions_df = predictions_df.sort_values(by='Date')
+
+        # Separate training and future predictions
+        training_predictions = predictions_df[predictions_df['Type'] == 'Training']
+        future_predictions = predictions_df[predictions_df['Type'] == 'Future']
+
+        # Combine training and future predictions into a single DataFrame
+        combined_predictions = pd.concat([training_predictions, future_predictions], ignore_index=True)
+
         # Create Plotly figure
         fig = go.Figure()
 
@@ -47,25 +57,30 @@ def app():
             line=dict(color='blue')
         ))
 
-        # Trace 2: Training Predictions
-        training_predictions = predictions_df[predictions_df['Type'] == 'Training']
+        # Trace 2: Combined Predictions with Color Transition
         fig.add_trace(go.Scatter(
-            x=training_predictions['Date'],
-            y=training_predictions['Predicted_Price'],
+            x=combined_predictions['Date'],
+            y=combined_predictions['Predicted_Price'],
             mode='lines',
-            name='Training Predictions',
-            line=dict(color='green')
+            name='Predicted Price',
+            line=dict(
+                color='green',  # Default color for training predictions
+                dash='solid'
+            )
         ))
 
-        # Trace 3: Future Predictions
-        future_predictions = predictions_df[predictions_df['Type'] == 'Future']
-        fig.add_trace(go.Scatter(
-            x=future_predictions['Date'],
-            y=future_predictions['Predicted_Price'],
-            mode='lines',
-            name='Future Predictions',
-            line=dict(color='red')
-        ))
+        # Add color transition for future predictions
+        if not future_predictions.empty:
+            fig.add_trace(go.Scatter(
+                x=future_predictions['Date'],
+                y=future_predictions['Predicted_Price'],
+                mode='lines',
+                name='Future Predictions',
+                line=dict(
+                    color='red',  # Color for future predictions
+                    dash='solid'
+                )
+            ))
 
         # Update layout with desired date format
         fig.update_layout(

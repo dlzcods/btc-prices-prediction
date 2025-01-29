@@ -67,7 +67,7 @@ def train_and_predict():
     pred_xgb_scaled = best_model.predict(last_features_scaled)
     pred_xgb = scaler_y.inverse_transform(pred_xgb_scaled.reshape(-1, 1))
     
-    with open('src/last_date.txt', 'r') as f:
+    with open('data/last_date.txt', 'r') as f:
         last_date_str = f.read().strip()
     last_date = pd.to_datetime(last_date_str)
 
@@ -92,8 +92,8 @@ def train_and_predict():
     combined_predictions = pd.concat([training_predictions, future_predictions], ignore_index=True)
     
     # Save combined predictions
-    combined_predictions.to_csv('src/combined_predictions.csv', index=False)
-    print("Combined predictions saved to src/combined_predictions.csv")
+    combined_predictions.to_csv('data/combined_predictions.csv', index=False)
+    print("Combined predictions saved to data/combined_predictions.csv")
 
 # Execute training and prediction
 train_and_predict()
