@@ -136,7 +136,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: model
-          path: src/
+          path: src/model.json
+                src/scaler_X.pkl
+                src/scaler_Y.pkl
 
       - name: Commit and push all changes
         env:
