@@ -73,11 +73,26 @@ def train_and_predict():
     # Calculate predicted dates
     predicted_dates = [last_date + timedelta(days=i) for i in range(1, 6)]
     
-    # Save predictions
-    predictions = pd.DataFrame({'Date': predicted_dates, 
-                                'Predicted_Price': pred_xgb.flatten()})
-    predictions.to_csv('src/predictions.csv', index=False)
-    print("Prediction saved to src/predictions.csv")
+    # Save training predictions
+    training_predictions = pd.DataFrame({
+        'Date': df.index[-len(y_pred):],
+        'Predicted_Price': y_pred.flatten(),
+        'Type': 'Training'
+    })
+    
+    # Save 5-day-ahead predictions
+    future_predictions = pd.DataFrame({
+        'Date': predicted_dates,
+        'Predicted_Price': pred_xgb.flatten(),
+        'Type': 'Future'
+    })
+    
+    # Combine training and future predictions
+    combined_predictions = pd.concat([training_predictions, future_predictions], ignore_index=True)
+    
+    # Save combined predictions
+    combined_predictions.to_csv('src/combined_predictions.csv', index=False)
+    print("Combined predictions saved to src/combined_predictions.csv")
 
 # Execute training and prediction
 train_and_predict()

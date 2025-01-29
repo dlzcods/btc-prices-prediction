@@ -8,7 +8,7 @@ from datetime import datetime
 
 def add_logo():
     logo_url = "./btc logo/image.png"  # URL logo BTC
-    st.sidebar.image(logo_url, width=100)
+    st.sidebar.image(logo_url, width=50)
 
 def app():
     try:
