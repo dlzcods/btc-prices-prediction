@@ -76,6 +76,12 @@ jobs:
           name: preprocessed-data
           path: data/
 
+      - name: Download last date artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: last-date
+          path: src/
+
       - name: Train model and save predictions
         run: |
           python src/train_and_predict.py
