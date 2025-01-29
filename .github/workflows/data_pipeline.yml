@@ -3,9 +3,9 @@ name: Data Pipeline
 on:
   workflow_dispatch:
   schedule:
-    # Menjalankan pekerjaan setiap hari pada jam 1 AM UTC untuk consume data
+    # Run the job every day at 1 AM UTC to consume data
     - cron: '0 1 * * *'
-    # Menjalankan pekerjaan setiap 6 hari sekali pada jam 3 AM UTC untuk training model
+    # Run the job every 6 days at 3 AM UTC to train the model
     - cron: '0 3 */6 * *'
 
 jobs:
@@ -32,11 +32,13 @@ jobs:
         run: |
           python src/preprocess_data.py
 
-      - name: Upload preprocessed data as an artifact
+      - name: Upload preprocessed data and last date as artifacts
         uses: actions/upload-artifact@v3
         with:
           name: preprocessed-data
-          path: data/preprocessed_data.csv
+          path: |
+            data/preprocessed_data.csv
+            src/last_date.txt
 
   train_and_predict:
     runs-on: ubuntu-latest
@@ -80,6 +82,5 @@ jobs:
           if git diff --quiet --cached; then
             echo "No changes to commit."
           else
-            git commit -m "Update model and predictions"
-            git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git
-          fi
+              git commit -m "Update model and predictions"
+              git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git

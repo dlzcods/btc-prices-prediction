@@ -1,61 +1,105 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import plotly.graph_objs as go
 from datetime import datetime
 
-# Fungsi untuk menambahkan logo di Streamlit
 def add_logo():
-    logo = "https://upload.wikimedia.org/wikipedia/commons/a/a5/Bitcoin_logo_2019.svg"  # URL logo BTC
-    st.image(logo, width=100)
+    logo_url = "./btc logo/image.png"  # URL logo BTC
+    st.sidebar.image(logo_url, width=100)
 
 def app():
-    # Mengambil data prediksi
-    predictions_df = pd.read_csv('src/predictions.csv')
-    
-    # Menambahkan logo BTC di bagian atas
-    add_logo()
+    try:
+        # Load historical data
+        historical_df = pd.read_csv('../data/btc_historical_data.csv')
+        historical_df['Date'] = pd.to_datetime(historical_df['date'])
+        
+        # Load predicted data
+        predictions_df = pd.read_csv('predictions.csv')
+        predictions_df['Date'] = pd.to_datetime(predictions_df['Date'])
+        
+        # Merge historical and predicted data based on date
+        merged_df = pd.merge(historical_df, predictions_df, on='Date', how='outer', suffixes=('_actual', '_predicted'))
+        
+        # Add logo in the sidebar
+        add_logo()
 
-    # Menampilkan judul dashboard
-    st.title('Bitcoin Price Prediction')
+        # Display the title of the dashboard
+        st.title('Bitcoin Price Prediction Dashboard')
 
-    # Menampilkan dataframe sebagai tabel
-    st.write(predictions_df)
+        # Display date range picker in the sidebar
+        st.sidebar.header("Filter Date Range")
+        start_date = st.sidebar.date_input("Start Date", datetime(2025, 1, 1))
+        end_date = st.sidebar.date_input("End Date", datetime(2025, 2, 1))
 
-    # Menampilkan kalender untuk memilih rentang tanggal
-    st.sidebar.header("Filter Date Range")
-    start_date = st.sidebar.date_input("Start Date", datetime(2024, 10, 19))
-    end_date = st.sidebar.date_input("End Date", datetime(2024, 10, 24))
+        # Filter data based on date
+        filtered_df = merged_df[(merged_df['Date'] >= pd.to_datetime(start_date)) & (merged_df['Date'] <= pd.to_datetime(end_date))]
 
-    # Memfilter data berdasarkan tanggal
-    predictions_df['Date'] = pd.to_datetime(predictions_df['Date'])
-    filtered_df = predictions_df[(predictions_df['Date'] >= pd.to_datetime(start_date)) & (predictions_df['Date'] <= pd.to_datetime(end_date))]
+        # Split data into actual and predicted
+        actual_data = filtered_df[filtered_df['close'].notna()]
+        predicted_data = filtered_df[filtered_df['Predicted_Price'].notna()]
 
-    # Menampilkan grafik
-    fig, ax = plt.subplots(figsize=(10, 6))
+        # Create Plotly figure
+        fig = go.Figure()
 
-    # Plot grafik harga aktual (dummy data, ganti sesuai kebutuhan Anda)
-    ax.plot(filtered_df['Date'], filtered_df['Predicted (XGBoost)'], label='Predicted Price', color='orange', marker='o')
-    
-    # Plot grafik harga aktual (pastikan data harga aktual ada di dataframe)
-    # Gantilah ini dengan data aktual Anda
-    ax.plot(filtered_df['Date'], filtered_df['Predicted (XGBoost)'] * 1.05, label='Actual Price', color='blue', marker='x')  # Dummy actual data
+        # Trace 1: Actual Prices
+        trace1 = go.Scatter(
+            x=actual_data['Date'],
+            y=actual_data['close'],
+            mode='lines',
+            name='Actual Price',
+            line=dict(color='blue')
+        )
 
-    # Menambahkan label dan judul
-    ax.set_xlabel('Date')
-    ax.set_ylabel('Price (USD)')
-    ax.set_title('Bitcoin Price Prediction vs Actual')
+        # Trace 2: Predicted Prices
+        trace2 = go.Scatter(
+            x=predicted_data['Date'],
+            y=predicted_data['Predicted_Price'],
+            mode='lines',
+            name='Predicted Price',
+            line=dict(color='orange')
+        )
 
-    # Format tanggal agar lebih mudah dibaca
-    ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax.xaxis.set_tick_params(rotation=45)
+        # Add traces to the figure
+        fig.add_trace(trace1)
+        fig.add_trace(trace2)
 
-    # Menambahkan legenda
-    ax.legend()
+        # Jika data aktual dan prediksi tidak bertemu, tambahkan garis putus-putus
+        if not actual_data.empty and not predicted_data.empty:
+            last_actual_point = actual_data.iloc[-1]  # Titik terakhir data aktual
+            first_predicted_point = predicted_data.iloc[0]  # Titik pertama data prediksi
 
-    # Menampilkan grafik ke Streamlit
-    st.pyplot(fig)
+            # Jika tanggal tidak sama, tambahkan garis putus-putus
+            if last_actual_point['Date'] != first_predicted_point['Date']:
+                fig.add_trace(go.Scatter(
+                    x=[last_actual_point['Date'], first_predicted_point['Date']],
+                    y=[last_actual_point['close'], first_predicted_point['Predicted_Price']],
+                    mode='lines',
+                    line=dict(dash='dash', color='black'),
+                    name='Connection',
+                    showlegend=False
+                ))
+
+        # Update layout dengan format tanggal yang diinginkan
+        fig.update_layout(
+            title='Bitcoin Price Prediction vs Actual',
+            xaxis_title='Date',
+            yaxis_title='Price (USD)',
+            hovermode='closest',
+            xaxis=dict(
+                tickformat='%b %d',  # Format tanggal: Jan 25, Feb 1, Mar 4
+                tickangle=-45,       # Miringkan label tanggal agar tidak bertumpuk
+                showgrid=True        # Tampilkan grid pada sumbu x
+            )
+        )
+
+        # Display the plot in Streamlit
+        st.plotly_chart(fig)
+
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
 
 if __name__ == '__main__':
     app()
