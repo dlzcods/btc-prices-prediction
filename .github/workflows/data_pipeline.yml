@@ -3,8 +3,10 @@ name: Data Pipeline
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * *'  # Daily at 1 AM UTC
-    - cron: '0 3 */6 * *'  # Every 6 days at 3 AM UTC
+    # Menjalankan pekerjaan setiap hari pada jam 1 AM UTC untuk consume data
+    - cron: '0 1 * * *'
+    # Menjalankan pekerjaan setiap 6 hari sekali pada jam 3 AM UTC untuk training model
+    - cron: '0 3 */6 * *'
 
 jobs:
   consume_data:
@@ -19,26 +21,23 @@ jobs:
           python-version: '3.8'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
 
       - name: Consume data from Coinpaprika API
-        run: python src/consume_data.py
-
-      - name: Upload merged data as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: merged-data
-          path: data/btc_historical_data.csv
+        run: |
+          python src/consume_data.py
 
       - name: Preprocess data
-        run: python src/preprocess_data.py
+        run: |
+          python src/preprocess_data.py
 
-      - name: Upload last date as artifact
+      - name: Upload preprocessed data as an artifact
         uses: actions/upload-artifact@v3
         with:
-          name: last-date
-          path: src/last_date.txt
-
+          name: preprocessed-data
+          path: data/preprocessed_data.csv
+      
       - name: Commit and push updated historical data
         env:
           PAT: ${{ secrets.PAT_TOKEN }}
@@ -62,22 +61,18 @@ jobs:
           python-version: '3.8'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
 
-      - name: Download merged data artifact
+      - name: Download preprocessed data artifact
         uses: actions/download-artifact@v3
         with:
-          name: merged-data
+          name: preprocessed-data
           path: data/
 
-      - name: Download last date artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: last-date
-          path: src/
-
       - name: Train model and save predictions
-        run: python src/train_and_predict.py
+        run: |
+          python src/train_and_predict.py
 
       - name: Upload model and predictions as artifacts
         uses: actions/upload-artifact@v3

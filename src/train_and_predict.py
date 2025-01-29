@@ -67,7 +67,7 @@ def train_and_predict():
     pred_xgb = scaler_y.inverse_transform(pred_xgb_scaled.reshape(-1, 1))
     
     # Calculate predicted dates
-    last_date = pd.to_datetime('2025-01-27')  # Replace with actual last date
+    last_date = df['date'].iloc[-1]
     predicted_dates = [last_date + timedelta(days=i) for i in range(1, 6)]
     
     # Save predictions
