@@ -66,8 +66,11 @@ def train_and_predict():
     pred_xgb_scaled = best_model.predict(last_features_scaled)
     pred_xgb = scaler_y.inverse_transform(pred_xgb_scaled.reshape(-1, 1))
     
+    with open('src/last_date.txt', 'r') as f:
+        last_date_str = f.read().strip()
+    last_date = pd.to_datetime(last_date_str)
+
     # Calculate predicted dates
-    last_date = df['date'].iloc[-1]
     predicted_dates = [last_date + timedelta(days=i) for i in range(1, 6)]
     
     # Save predictions

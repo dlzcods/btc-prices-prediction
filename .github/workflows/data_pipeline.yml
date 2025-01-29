@@ -38,6 +38,12 @@ jobs:
           name: preprocessed-data
           path: data/preprocessed_data.csv
       
+      - name: Upload last date as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: last-date
+          path: src/last_date.txt
+      
       - name: Commit and push updated historical data
         env:
           PAT: ${{ secrets.PAT_TOKEN }}
