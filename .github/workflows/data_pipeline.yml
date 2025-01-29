@@ -50,9 +50,9 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git fetch origin update-historical-data
+          git fetch origin
           git checkout main
-          git merge update-historical-data --no-ff --no-edit
+          git merge origin/update-historical-data --no-ff --no-edit
           git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git main
 
   train_and_predict:
