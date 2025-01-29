@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: merged-data
-          path: data/merged_data.csv
+          path: data/btc_historical_data.csv
 
       - name: Preprocess data
         run: |
@@ -130,7 +130,7 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add data/merged_data.csv data/preprocessed_data.csv src/last_date.txt src/model.json src/scaler_X.pkl src/scaler_Y.pkl src/predictions.csv
+          git add data/btc_historical_data.csv data/preprocessed_data.csv src/last_date.txt src/model.json src/scaler_X.pkl src/scaler_Y.pkl src/predictions.csv
           if git diff --quiet --cached; then
             echo "No changes to commit."
           else
