@@ -53,7 +53,13 @@ jobs:
           git fetch origin
           git checkout main
           git merge origin/update-historical-data --no-ff --no-edit
-          git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git main
+          git add data/preprocessed_data.csv src/last_date.txt
+          if git diff --quiet --cached; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update historical data"
+            git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git main
+          fi
 
   train_and_predict:
     runs-on: ubuntu-latest
@@ -99,10 +105,13 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
+          git fetch origin
+          git checkout main
+          git merge origin/update-historical-data --no-ff --no-edit
           git add src/model.json src/scaler_X.pkl src/scaler_Y.pkl src/predictions.csv
           if git diff --quiet --cached; then
             echo "No changes to commit."
           else
-            git commit -m "Update model and predictions"
+            git commit -m "Update historical data, model, and predictions"
             git push https://x-access-token:${PAT}@github.com/dlzcods/btc-prices-prediction.git main
           fi
