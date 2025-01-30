@@ -17,11 +17,14 @@ def fetch_data():
         
         # Convert the 'time_open' column to datetime and rename it to 'date'
         df['date'] = pd.to_datetime(df['time_open']).dt.strftime('%Y-%m-%d %H:%M:%S')
-        df.drop(columns=['time_open'], inplace=True)  # Drop the old 'time_open' column
+        df.drop(columns=['time_open'], inplace=True)
         
         # Convert volume and market_cap to float
         df['volume'] = df['volume'].astype(float)
         df['market_cap'] = df['market_cap'].astype(float)
+
+        df['marketcap'] = df['market_cap']
+        df.drop(columns=['market_cap'], inplace=True)
 
         # Read existing data
         try:
