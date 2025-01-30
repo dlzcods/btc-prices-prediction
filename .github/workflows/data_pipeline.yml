@@ -5,8 +5,6 @@ on:
   schedule:
     # Menjalankan pekerjaan setiap hari pada jam 1 AM UTC untuk consume data
     - cron: '0 1 * * *'
-    # Menjalankan pekerjaan setiap 6 hari sekali pada jam 3 AM UTC untuk training model
-    - cron: '0 3 */6 * *'
 
 jobs:
   consume_data:
