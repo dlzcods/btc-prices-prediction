@@ -27,7 +27,7 @@ jobs:
           python src/consume_data.py
 
       - name: Upload merged data as an artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: merged-data
           path: data/btc_historical_data.csv
@@ -37,13 +37,13 @@ jobs:
           python src/preprocess_data.py
 
       - name: Upload preprocessed data as an artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: preprocessed-data
           path: data/preprocessed_data.csv
           
       - name: Upload last date as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: last-date
           path: data/last_date.txt
@@ -65,13 +65,13 @@ jobs:
           pip install -r requirements.txt
 
       - name: Download preprocessed data artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: preprocessed-data
           path: data/
 
       - name: Download last date artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: last-date
           path: data/
@@ -81,13 +81,13 @@ jobs:
           python src/train_and_predict.py
 
       - name: Upload predictions as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: predictions
           path: data/combined_predictions.csv
 
       - name: Upload model as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: model
           path: | 
@@ -96,7 +96,7 @@ jobs:
                 src/scaler_Y.pkl
 
       - name: Upload evaluation metrics as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: evaluation
           path: data/evaluation_metrics.csv
@@ -114,31 +114,31 @@ jobs:
           python-version: '3.8'
 
       - name: Download merged data artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: merged-data
           path: data/
 
       - name: Download preprocessed data artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: preprocessed-data
           path: data/
 
       - name: Download last date artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: last-date
           path: data/
 
       - name: Download predictions artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: predictions
           path: data/
 
       - name: Download model artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: model
           path: | 
@@ -147,7 +147,7 @@ jobs:
                 src/scaler_Y.pkl
 
       - name: Download evaluation metrics artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: evaluation
           path: data/
