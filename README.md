@@ -1,1 +1,1 @@
-# btc-prices-prediction
+# Automated Bitcoin Price Prediction
