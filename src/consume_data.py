@@ -23,6 +23,7 @@ def fetch_data():
 
         df['marketcap'] = df['market_cap']
         df.drop(columns=['market_cap'], inplace=True)
+        df.drop(columns=['time_close'], inplace=True)
 
         try:
             existing_data = pd.read_csv('data/btc_historical_data.csv')
