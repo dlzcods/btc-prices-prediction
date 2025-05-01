@@ -31,7 +31,7 @@ def preprocess_data():
     df['marketcap_shifted'] = df['marketcap'].shift(5)
     df['prediction_5D'] = df['close'].shift(5)
 
-    df.dropna(subset=['high_shifted', 'low_shifted', 'open_shifted', 'volume_shifted', 'marketcap_shifted', 'prediction_5D', 'time_close', 'market_cap'], inplace=True)
+    df.dropna(subset=['high_shifted', 'low_shifted', 'open_shifted', 'volume_shifted', 'marketcap_shifted', 'prediction_5D'], inplace=True)
 
     if df.empty:
         print("Error: The DataFrame is empty after dropping NaN values. Check the 'data/btc_historical_data.csv' file.")
