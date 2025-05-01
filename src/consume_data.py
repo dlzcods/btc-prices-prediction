@@ -40,6 +40,8 @@ def fetch_data():
 
             combined_data = pd.concat([existing_data, new_data], ignore_index=True)
             combined_data.sort_values(by='date', inplace=True)
+            combined_data.drop(columns=['market_cap'], inplace=True)
+            combined_data.df.drop(columns=['time_close'], inplace=True)
             
             combined_data.to_csv('data/btc_historical_data.csv', index=False)
             print("Data successfully fetched, merged, and saved.")
